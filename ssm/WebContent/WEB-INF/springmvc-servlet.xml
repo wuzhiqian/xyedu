@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+	<!-- 启用自动扫描 -->
+	<context:component-scan base-package="com" />
+	<mvc:annotation-driven />
+	<!-- 提供映射处理器(HandlerMapping)根据名称或类名访问规则 
+	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
+	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" /> -->
+	
+	<!-- 提供视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	  <property name="prefix" value="/" />
+	  <property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- 加类路径下的载外部文件 -->
+	<context:property-placeholder location="classpath:db.properties" />
+	
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" >
+	   <property name="driverClassName" value="${db_driver}" />
+	   <property name="url" value="${db_url}" />
+	   <property name="username" value="${db_user}" />
+	   <property name="password" value="${db_pwd}" />
+	</bean> 
+	
+	<!-- 配置SqlSessionFactory:负责管理创建SqlSession -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 连接数据库 -->
+	    <property name="dataSource" ref="dataSource"></property>
+		<!-- 指定MyBatis的配置文件(加载映射文件) -->
+        <property name="configLocation" value="classpath:config.xml"></property>
+     
+    </bean>
+ 	
+	<!-- MapperScannerConfigurer:通过它来扫描接口从而创建对应实现类对象 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	   <!-- 指明接口的位置 -->
+	   <property name="basePackage" value="com.dao" />
+	   <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 配置业务逻辑控制器 
+	<bean name="/dept.do" class="com.controller.DeptController" />
+	<bean name="/emp.do" class="com.controller.EmpController" /> -->
+	
+	<!-- 配置上传文件 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	   <property name="maxUploadSize" value="20971520"></property>
+	</bean>
+	
+	<!-- 拦截器 
+	<mvc:interceptors>
+	   <mvc:interceptor>
+	       <mvc:mapping path="/**" />
+	       <bean class="com.util.InterceptorUtil"></bean>
+	   </mvc:interceptor>
+	</mvc:interceptors>  -->
+	
+	<!-- 静态资源的处理:1 
+	<mvc:resources location="/css/" mapping="/css/**"/>
+	<mvc:resources location="/js/" mapping="/js/**"/>
+	<mvc:resources location="/images/" mapping="/images/**"/> -->
+	
+	<!-- 静态资源的处理:2 -->
+	<mvc:default-servlet-handler/>
+	
+</beans>

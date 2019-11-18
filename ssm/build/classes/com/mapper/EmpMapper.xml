@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.EmpDAO">
+	<resultMap type="Emp" id="empResultMap">
+	    <id column="id" property="id"/>
+		<result column="empno" property="empno" />
+		<result column="name" property="name" />
+		<result column="sex" property="sex" />
+		<association property="dept" javaType="Dept">
+			<id column="id" property="id" />
+			<result column="manager" property="manager" />
+			<result column="deptName" property="name" />
+		</association>
+	</resultMap>
+
+
+	<insert id="add" parameterType="Emp">
+		insert into emp
+		values(null,#{empno},#{name},#{sex},#{tel},#{salary},#{offer},#{deptId},#{pwd})
+	</insert>
+
+	<delete id="del" parameterType="int">
+		delete from emp where id=#{id}
+	</delete>
+
+	<!-- 修改 -->
+	<update id="update" parameterType="Emp">
+		update emp set
+		empno=#{empno},name=#{name},sex=#{sex},salary=#{salary},tel=#{tel},offer=#{offer},deptId=#{deptId},pwd=#{pwd}
+		where id=#{id}
+	</update>
+
+
+	<select id="load" resultType="Emp" parameterType="int">
+		select * from emp where id=#{id}
+	</select>
+	
+    <select id="check" resultType="Emp" parameterType="String">
+		select * from emp where empno=#{empno}
+	</select>
+
+	<select id="show" resultMap="empResultMap">
+		select emp.*,dept.name deptName,dept.manager from emp,dept where dept.id=emp.deptId
+	</select>
+
+</mapper>
+
