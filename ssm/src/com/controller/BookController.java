@@ -17,6 +17,7 @@ public class BookController {
 	   @RequestMapping(value="/show")
 	   @ResponseBody
 	   public List show(String name) {
+		   System.out.println("ddddd");
 		   List all = bookService.show(name);
 		   return all;
 	   }

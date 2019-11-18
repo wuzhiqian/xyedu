@@ -35,6 +35,7 @@ public class DeptController {
 	   
 	   @RequestMapping(value="/show")
 	   public String show(ModelMap modelMap) {
+		   System.out.println("dddd");
 		   List all = deptService.show();
 		   modelMap.addAttribute("all", all);
 		   return "dept/show";
